@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pancasila Play - Jelajah Sejarah Lahirnya Pancasila</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            red: '#E63946',
+                            crimson: '#D62828',
+                            gold: '#FFB703',
+                            navy: '#1D3557',
+                            lightNavy: '#457B9D',
+                            cream: '#F1FAEE',
+                            mint: '#2A9D8F'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
+                        display: ['Fredoka', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+        .font-fredoka {
+            font-family: 'Fredoka', sans-serif;
+        }
+        /* Mobile App Frame Boundaries on Desktop */
+        .app-container {
+            max-width: 480px;
+            margin: 0 auto;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-color: #ffffff;
+            box-shadow: 0 0 25px rgba(0,0,0,0.08);
+            position: relative;
+            overflow-x: hidden;
+        }
+        /* Custom scrollbar hiding for app feel */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        /* Active Tab Animation */
+        .tab-btn.active {
+            color: #E63946;
+            transform: translateY(-2px);
+        }
+        .tab-btn.active svg {
+            stroke-width: 2.5px;
+        }
+        /* Card transition effects */
+        .interactive-card {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .interactive-card:active {
+            transform: scale(0.98);
+        }
+        /* Timeline Pulse */
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 0.4; }
+            100% { transform: scale(0.95); opacity: 0.8; }
+        }
+        .pulse-ring {
+            animation: pulse-ring 2s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="h-full bg-slate-100 flex justify-center items-center">
+
+    <div class="app-container w-full relative pb-20">
+
+        <!-- HEADER TOP BAR -->
+        <header class="bg-brand-navy text-white px-4 py-3 sticky top-0 z-40 shadow-md flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <div class="w-9 h-9 rounded-full bg-brand-red flex items-center justify-center font-bold text-lg shadow-inner">
+                    🇮🇩
+                </div>
+                <div>
+                    <h1 class="text-base font-bold font-fredoka leading-tight text-amber-300">Pancasila Play</h1>
+                    <p class="text-[10px] text-slate-300">Modul Paket B • Kelas VIII</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2">
+                <div class="bg-white/10 backdrop-blur-md px-2.5 py-1 rounded-full text-xs font-semibold flex items-center gap-1 border border-white/20">
+                    <i data-lucide="award" class="w-4 h-4 text-brand-gold"></i>
+                    <span id="user-points">0</span> <span class="text-[10px] text-slate-300">XP</span>
+                </div>
+                <button onclick="toggleInfoModal()" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20">
+                    <i data-lucide="help-circle" class="w-4 h-4 text-white"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- MAIN VIEW PORT (DYNAMICAL-SWITCHED VIEWS) -->
+        <main id="app-content" class="flex-1 p-4 overflow-y-auto no-scrollbar">
+            <!-- Dynamic Content loaded by JS -->
+        </main>
+
+        <!-- BOTTOM NAVIGATION BAR -->
+        <nav class="fixed bottom-0 left-0 right-0 max-w-[480px] mx-auto bg-white border-t border-slate-200 px-2 py-2 flex justify-around items-center z-50 shadow-lg">
+            <button onclick="switchView('home')" id="nav-home" class="tab-btn active flex flex-col items-center py-1 px-3 text-slate-500 hover:text-brand-red transition">
+                <i data-lucide="home" class="w-5 h-5"></i>
+                <span class="text-[10px] font-semibold mt-1">Beranda</span>
+            </button>
+            <button onclick="switchView('timeline')" id="nav-timeline" class="tab-btn flex flex-col items-center py-1 px-3 text-slate-500 hover:text-brand-red transition">
+                <i data-lucide="route" class="w-5 h-5"></i>
+                <span class="text-[10px] font-semibold mt-1">Timeline</span>
+            </button>
+            <button onclick="switchView('materi')" id="nav-materi" class="tab-btn flex flex-col items-center py-1 px-3 text-slate-500 hover:text-brand-red transition">
+                <i data-lucide="book-open" class="w-5 h-5"></i>
+                <span class="text-[10px] font-semibold mt-1">Materi</span>
+            </button>
+            <button onclick="switchView('quiz')" id="nav-quiz" class="tab-btn flex flex-col items-center py-1 px-3 text-slate-500 hover:text-brand-red transition">
+                <i data-lucide="gamepad-2" class="w-5 h-5"></i>
+                <span class="text-[10px] font-semibold mt-1">Kuis</span>
+            </button>
+            <button onclick="switchView('rangkuman')" id="nav-rangkuman" class="tab-btn flex flex-col items-center py-1 px-3 text-slate-500 hover:text-brand-red transition">
+                <i data-lucide="sparkles" class="w-5 h-5"></i>
+                <span class="text-[10px] font-semibold mt-1">Inti Super</span>
+            </button>
+        </nav>
+
+        <!-- INFO / ARCHITECTURE MODAL -->
+        <div id="info-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+            <div class="bg-white rounded-2xl p-5 max-w-sm w-full max-h-[85vh] overflow-y-auto relative shadow-2xl">
+                <button onclick="toggleInfoModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+                <h3 class="text-lg font-bold text-brand-navy font-fredoka flex items-center gap-2 mb-2">
+                    <i data-lucide="info" class="text-brand-red"></i> Tentang Aplikasi
+                </h3>
+                <p class="text-xs text-slate-600 leading-relaxed mb-3">
+                    Aplikasi ini dirancang dengan pendekatan <strong>Instructional Design (Microlearning & Gamification)</strong> khusus untuk siswa Kesetaraan Paket B (Usia 13+ Tahun).
+                </p>
+                <div class="space-y-2 text-xs bg-slate-50 p-3 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-800">🎯 Fitur Unggulan:</p>
+                    <ul class="list-disc pl-4 text-slate-600 space-y-1">
+                        <li>Bahasa Gaul & Edukatif (Akrab untuk Remaja)</li>
+                        <li>Timeline Interaktif Alur Peristiwa</li>
+                        <li>Profil Tokoh Sejarah Interaktif</li>
+                        <li>Kuis & Skor XP Real-time</li>
+                        <li>Flashcard Kata Kunci Pengunci Ingatan</li>
+                    </ul>
+                </div>
+                <div class="mt-4 pt-3 border-t border-slate-100 flex flex-col gap-2">
+                    <button onclick="switchView('guide')" class="w-full py-2 bg-brand-navy text-white text-xs font-semibold rounded-xl hover:bg-slate-800">
+                        📖 Panduan Guru / Panduan APK (Cordova/PWA)
+                    </button>
+                    <button onclick="toggleInfoModal()" class="w-full py-2 bg-slate-100 text-slate-700 text-xs font-semibold rounded-xl">
+                        Tutup
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- NOTIFICATION / TOAST MODAL -->
+        <div id="toast" class="fixed top-16 left-1/2 -translate-x-1/2 bg-brand-navy text-white text-xs px-4 py-2.5 rounded-full shadow-lg border border-amber-400/40 opacity-0 pointer-events-none transition-all duration-300 z-50 flex items-center gap-2">
+            <i data-lucide="bell" class="w-4 h-4 text-brand-gold"></i>
+            <span id="toast-message">Pesan Toast</span>
+        </div>
+
+    </div>
+
+    <script>
+        const state = {
+            currentView: 'home',
+            currentMateriTab: 'A',
+            userScore: parseInt(localStorage.getItem('pancasila_score') || '0'),
+            quizAnswers: {},
+            completedModules: JSON.parse(localStorage.getItem('pancasila_completed') || '[]')
+        };
+
+        const materiData = {
+            A: {
+                title: 'Kedatangan Jepang ke Indonesia',
+                badge: 'Materi 1',
+                icon: 'anchor',
+                color: 'from-amber-500 to-orange-600',
+                summary: 'Peralihan kekuasaan Belanda ke Jepang, propaganda Saudara Tua, dan Gerakan 3A.',
+                content: `
+                    <div class="space-y-4">
+                        <div class="bg-amber-50 p-4 rounded-2xl border border-amber-200">
+                            <span class="bg-amber-500 text-white text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-md">Latar Belakang</span>
+                            <h4 class="font-bold text-slate-800 text-base mt-2">Bumi Hangus & Bergantinya Penjajah ⚔️</h4>
+                            <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                                Pada tanggal <strong>7 Desember 1941</strong>, Jepang menyerang pangkalan militer AS di <strong>Pearl Harbour</strong>. Ini jadi pemicu Perang Pasifik (Perang Asia Timur Raya).
+                            </p>
+                        </div>
+
+                        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-red-100 text-brand-red flex items-center justify-center font-bold text-lg">📜</div>
+                                <div>
+                                    <h5 class="text-xs font-bold text-slate-800">Kapitulasi Kalijati (8 Maret 1942)</h5>
+                                    <p class="text-[11px] text-slate-500">Belanda Resmi Menyerah Tanpa Syarat kepada Jepang di Kalijati, Subang, Jawa Barat.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-900 text-white p-4 rounded-2xl shadow-md">
+                            <h4 class="text-xs font-bold text-amber-400 mb-2 flex items-center gap-2">
+                                <i data-lucide="sparkles" class="w-4 h-4"></i> Propaganda "Saudara Tua" & Tiga A
+                            </h4>
+                            <p class="text-xs text-slate-300 leading-relaxed mb-3">
+                                Jepang ngaku-ngaku sebagai "Saudara Tua" bangsa Asia yang mau membebaskan Indonesia dari penjajahan Barat. Mereka bikin semboyan <strong>Gerakan Tiga A</strong> yang dipimpin Mr. Shamsuddin:
+                            </p>
+                            <div class="grid grid-cols-3 gap-2 text-center text-[10px] font-bold">
+                                <div class="bg-white/10 p-2 rounded-xl border border-white/10">
+                                    <span class="block text-amber-300">Jepang</span> Cahaya Asia
+                                </div>
+                                <div class="bg-white/10 p-2 rounded-xl border border-white/10">
+                                    <span class="block text-amber-300">Jepang</span> Pelindung Asia
+                                </div>
+                                <div class="bg-white/10 p-2 rounded-xl border border-white/10">
+                                    <span class="block text-amber-300">Jepang</span> Pemimpin Asia
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-rose-50 p-3 rounded-2xl border border-rose-200 text-xs text-rose-900">
+                            <strong>💡 Respons Rakyat:</strong> Awalnya disambut gembira karena dikira penolong. Tapi tidak lama kemudian, rakyat sadar kalau Jepang justru melakukan pemerasan sumber daya dan tenaga (Romusha).
+                        </div>
+                    </div>
+                `
+            },
+            B: {
+                title: 'Jepang Mulai Terdesak',
+                badge: 'Materi 2',
+                icon: 'trending-down',
+                color: 'from-rose-500 to-red-600',
+                summary: 'Kekalahan perang Sekutu dan lahirnya Janji Kemerdekaan 7 September 1944.',
+                content: `
+                    <div class="space-y-4">
+                        <div class="bg-red-50 p-4 rounded-2xl border border-red-200">
+                            <h4 class="font-bold text-slate-800 text-base">Roda Berputar: Perang Pasifik Berbalik! 📉</h4>
+                            <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                                Memasuki tahun 1944, posisi militer Jepang mulai terdesak hebat di mana-mana akibat serangan balik Sekutu (Amerika Serikat dan sekutunya). Sekutu merebut pulau demi pulau di Pasifik.
+                            </p>
+                        </div>
+
+                        <!-- Flowchart Interaktif -->
+                        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+                            <h5 class="text-xs font-bold text-slate-700 mb-3 text-center uppercase tracking-wide">⚡ Alur Logika Sejarah</h5>
+                            <div class="space-y-2 text-xs">
+                                <div class="p-2.5 bg-slate-100 rounded-xl font-medium text-slate-800 flex items-center justify-between">
+                                    <span>1. Jepang Kalah Perang di Pasifik</span>
+                                    <i data-lucide="arrow-down" class="w-4 h-4 text-slate-400"></i>
+                                </div>
+                                <div class="p-2.5 bg-amber-100 rounded-xl font-medium text-amber-900 flex items-center justify-between">
+                                    <span>2. Butuh Bantuan Bersenjata Rakyat Indonesia</span>
+                                    <i data-lucide="arrow-down" class="w-4 h-4 text-amber-500"></i>
+                                </div>
+                                <div class="p-2.5 bg-blue-100 rounded-xl font-medium text-blue-900 flex items-center justify-between">
+                                    <span>3. Janji Kemerdekaan Obral (PM Koiso)</span>
+                                    <i data-lucide="arrow-down" class="w-4 h-4 text-blue-500"></i>
+                                </div>
+                                <div class="p-2.5 bg-emerald-100 rounded-xl font-bold text-emerald-900 flex items-center justify-between border border-emerald-300">
+                                    <span>4. Pembentukan BPUPK! 🇮🇩</span>
+                                    <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-800 text-white p-4 rounded-2xl">
+                            <span class="bg-amber-400 text-slate-900 font-bold text-[10px] px-2 py-0.5 rounded">Penting Diketahui</span>
+                            <h4 class="text-xs font-bold mt-2 text-amber-300">Janji Koiso (7 September 1944)</h4>
+                            <p class="text-xs text-slate-300 mt-1 leading-relaxed">
+                                Perdana Menteri Jepang, <strong>Kuniaki Koiso</strong>, mengumumkan di Parlemen Jepang bahwa Hindia Timur (Indonesia) akan diperkenankan merdeka <em>"di kemudian hari"</em> agar rakyat mau membantu Jepang melawan Sekutu.
+                            </p>
+                        </div>
+                    </div>
+                `
+            },
+            C: {
+                title: 'Pembentukan BPUPK',
+                badge: 'Materi 3',
+                icon: 'file-text',
+                color: 'from-blue-600 to-cyan-600',
+                summary: 'Dokuritsu Zyunbi Tyoosakai, tanggal pengumuman, pelantikan, dan tugas utamanya.',
+                content: `
+                    <div class="space-y-4">
+                        <div class="bg-blue-50 p-4 rounded-2xl border border-blue-200">
+                            <div class="flex items-center justify-between">
+                                <span class="bg-blue-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">Istilah Jepang</span>
+                                <span class="text-[11px] font-semibold text-blue-800">Jawa & Madura</span>
+                            </div>
+                            <h4 class="font-bold text-slate-800 text-base mt-2">Dokuritsu Zyunbi Tyoosakai 🎌</h4>
+                            <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                                BPUPK singkatan dari <strong>Badan Penyelidik Usaha-Usaha Persiapan Kemerdekaan</strong> (Dalam bahasa Jepang disingkat <em>Dokuritsu Zyunbi Tyoosakai</em>).
+                            </p>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm text-center">
+                                <p class="text-[10px] font-bold text-slate-400 uppercase">Diumumkan</p>
+                                <p class="text-sm font-extrabold text-brand-navy mt-1">1 Maret 1945</p>
+                                <p class="text-[10px] text-slate-500 mt-0.5">Oleh Letjend Kumakichi Harada</p>
+                            </div>
+                            <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm text-center">
+                                <p class="text-[10px] font-bold text-slate-400 uppercase">Resmi Dilantik</p>
+                                <p class="text-sm font-extrabold text-brand-red mt-1">29 April 1945</p>
+                                <p class="text-[10px] text-slate-500 mt-0.5">Pas ultah Kaisar Hirohito</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-amber-50 border border-amber-200 p-4 rounded-2xl">
+                            <h5 class="text-xs font-bold text-amber-900 flex items-center gap-1.5 mb-1">
+                                <i data-lucide="target" class="w-4 h-4 text-amber-600"></i> Tugas Utama BPUPK
+                            </h5>
+                            <p class="text-xs text-amber-800 leading-relaxed">
+                                Menyelidiki, mempelajari, dan mempersiapkan hal-hal penting yang berhubungan dengan tata pemerintahan dan pembentukan negara Indonesia yang merdeka.
+                            </p>
+                        </div>
+                    </div>
+                `
+            },
+            D: {
+                title: 'Tokoh-Tokoh BPUPK',
+                badge: 'Materi 4',
+                icon: 'users',
+                color: 'from-emerald-600 to-teal-700',
+                summary: 'Mengenal Pimpinan & Tokoh Perumus Dasar Negara (Radjiman, Sukarno, Hatta, Yamin, Soepomo).',
+                content: `
+                    <div class="space-y-3">
+                        <p class="text-xs text-slate-500">Klik kartu tokoh di bawah ini untuk melihat peran sejarahnya!</p>
+                        
+                        <div onclick="showTokohDetail('radjiman')" class="interactive-card bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3 cursor-pointer hover:border-brand-red">
+                            <div class="w-12 h-12 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center font-extrabold text-lg">👨‍⚕️</div>
+                            <div class="flex-1">
+                                <h5 class="text-xs font-bold text-slate-800">dr. K.R.T. Radjiman Wedyodiningrat</h5>
+                                <p class="text-[11px] text-brand-red font-semibold">Ketua BPUPK</p>
+                            </div>
+                            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
+                        </div>
+
+                        <div onclick="showTokohDetail('soeroso')" class="interactive-card bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3 cursor-pointer hover:border-brand-red">
+                            <div class="w-12 h-12 rounded-full bg-blue-100 text-blue-800 flex items-center justify-center font-extrabold text-lg">🤝</div>
+                            <div class="flex-1">
+                                <h5 class="text-xs font-bold text-slate-800">R.P. Soeroso & Ichibangase Yosio</h5>
+                                <p class="text-[11px] text-blue-600 font-semibold">Wakil Ketua (Indonesia & Jepang)</p>
+                            </div>
+                            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
+                        </div>
+
+                        <div onclick="showTokohDetail('sukarno')" class="interactive-card bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3 cursor-pointer hover:border-brand-red">
+                            <div class="w-12 h-12 rounded-full bg-red-100 text-red-800 flex items-center justify-center font-extrabold text-lg">🎙️</div>
+                            <div class="flex-1">
+                                <h5 class="text-xs font-bold text-slate-800">Ir. Sukarno</h5>
+                                <p class="text-[11px] text-red-600 font-semibold">Pencetus Nama "Pancasila" (1 Juni 1945)</p>
+                            </div>
+                            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
+                        </div>
+
+                        <div onclick="showTokohDetail('yamin')" class="interactive-card bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3 cursor-pointer hover:border-brand-red">
+                            <div class="w-12 h-12 rounded-full bg-purple-100 text-purple-800 flex items-center justify-center font-extrabold text-lg">✍️</div>
+                            <div class="flex-1">
+                                <h5 class="text-xs font-bold text-slate-800">Mr. Muhammad Yamin</h5>
+                                <p class="text-[11px] text-purple-600 font-semibold">Usulan Asas Dasar (29 Mei 1945)</p>
+                            </div>
+                            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
+                        </div>
+
+                        <div onclick="showTokohDetail('soepomo')" class="interactive-card bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3 cursor-pointer hover:border-brand-red">
+                            <div class="w-12 h-12 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center font-extrabold text-lg">⚖️</div>
+                            <div class="flex-1">
+                                <h5 class="text-xs font-bold text-slate-800">Prof. Mr. Dr. Soepomo</h5>
+                                <p class="text-[11px] text-emerald-600 font-semibold">Konsep Negara Integralistik (31 Mei 1945)</p>
+                            </div>
+                            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
+                        </div>
+                    </div>
+                `
+            },
+            E: {
+                title: 'Sidang-Sidang Utama BPUPK',
+                badge: 'Materi 5',
+                icon: 'gavel',
+                color: 'from-purple-600 to-indigo-700',
+                summary: 'Sidang I (Dasar Negara & Pancasila) dan Sidang II (Rancangan Undang-Undang Dasar).',
+                content: `
+                    <div class="space-y-4">
+                        <!-- Sidang I -->
+                        <div class="bg-purple-50 p-4 rounded-2xl border border-purple-200">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="bg-purple-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">Sidang Pertama</span>
+                                <span class="text-[10px] font-bold text-purple-800">29 Mei – 1 Juni 1945</span>
+                            </div>
+                            <h4 class="font-bold text-slate-800 text-sm mt-1">Membahas "Dasar Negara" 🏛️</h4>
+                            <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                                Bertempat di Gedung Chuo Sangi In (sekarang Gedung Pancasila, Jakarta). Tiga tokoh menyampaikan pemikiran: Muh. Yamin, Soepomo, dan Ir. Sukarno.
+                            </p>
+                            <div class="mt-3 bg-white p-2.5 rounded-xl border border-purple-200 text-xs">
+                                <span class="font-bold text-brand-red block mb-1">🔥 Pidato Berjarah 1 Juni 1945</span>
+                                Ir. Sukarno menyampaikan 5 dasar negara yang dinamakan <strong>Pancasila</strong> (saran dari ahli bahasa). Tanggal ini diperingati sebagai <strong>Hari Lahir Pancasila</strong>!
+                            </div>
+                        </div>
+
+                        <!-- Sidang II -->
+                        <div class="bg-indigo-50 p-4 rounded-2xl border border-indigo-200">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="bg-indigo-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">Sidang Kedua</span>
+                                <span class="text-[10px] font-bold text-indigo-800">10 – 17 Juli 1945</span>
+                            </div>
+                            <h4 class="font-bold text-slate-800 text-sm mt-1">Membahas "Rancangan UUD & Wilayah" 📖</h4>
+                            <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                                Membahas bentuk negara (Republik), wilayah negara, kewarganegaraan, serta merancang Undang-Undang Dasar (UUD).
+                            </p>
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        const timelineData = [
+            { date: '7 Des 1941', title: 'Pearl Harbour Diserang', desc: 'Jepang menyerang pangkalan laut AS. Perang Pasifik meletus.', icon: 'bomb', color: 'bg-red-500' },
+            { date: '8 Mar 1942', title: 'Kapitulasi Kalijati', desc: 'Belanda menyerah tanpa syarat. Jepang resmi menjajah Indonesia.', icon: 'flag', color: 'bg-amber-500' },
+            { date: '7 Sep 1944', title: 'Janji Koiso', desc: 'Jepang terdesak kalah perang, menjanjikan kemerdekaan di kemudian hari.', icon: 'megaphone', color: 'bg-blue-500' },
+            { date: '1 Mar 1945', title: 'Pengumuman BPUPK', desc: 'Letjend Kumakichi Harada mengumumkan pembentukan BPUPK.', icon: 'file-text', color: 'bg-indigo-500' },
+            { date: '29 Apr 1945', title: 'Pelantikan BPUPK', desc: 'Anggota BPUPK resmi dilantik bertepatan ultah Kaisar Hirohito.', icon: 'user-check', color: 'bg-teal-500' },
+            { date: '29 Mei - 1 Jun 1945', title: 'Sidang I BPUPK', desc: 'Membahas Dasar Negara. Pidato Ir. Sukarno melahirkan Pancasila (1 Juni).', icon: 'award', color: 'bg-brand-red' },
+            { date: '10 - 17 Jul 1945', title: 'Sidang II BPUPK', desc: 'Membahas bentuk negara, wilayah, dan Rancangan UUD.', icon: 'book', color: 'bg-purple-600' }
+        ];
+
+        const quizQuestions = [
+            {
+                q: "Apa nama perjanjian penyerahan kekuasaan tanpa syarat dari Belanda kepada Jepang pada 8 Maret 1942?",
+                options: ["Perjanjian Linggarjati", "Kapitulasi Kalijati", "Perjanjian Renville", "Kapitulasi Linggajati"],
+                answer: 1,
+                explanation: "Kapitulasi Kalijati ditandatangani di Kalijati, Subang pada 8 Maret 1942, menandai dimulainya pendudukan Jepang."
+            },
+            {
+                q: "Guna menarik simpati rakyat Indonesia, Jepang membentuk Gerakan Tiga A. Nama pemimpin gerakan ini dari tokoh Indonesia adalah...",
+                options: ["Ir. Sukarno", "Mr. Shamsuddin", "Moh. Hatta", "dr. Radjiman"],
+                answer: 1,
+                explanation: "Gerakan Tiga A dipimpin oleh Mr. Shamsuddin dengan slogan Jepang Cahaya, Pelindung, dan Pemimpin Asia."
+            },
+            {
+                q: "BPUPK dalam bahasa Jepang dikenal dengan sebutan...",
+                options: ["Dokuritsu Zyunbi Inkai", "Dokuritsu Zyunbi Tyoosakai", "Heiho", "Kumiai"],
+                answer: 1,
+                explanation: "BPUPK dinamakan Dokuritsu Zyunbi Tyoosakai, sedangkan Dokuritsu Zyunbi Inkai adalah sebutan untuk PPKI."
+            },
+            {
+                q: "Siapakah yang ditunjuk sebagai Ketua (Kaichou) BPUPK?",
+                options: ["Ir. Sukarno", "dr. K.R.T. Radjiman Wedyodiningrat", "R.P. Soeroso", "Ichibangase Yosio"],
+                answer: 1,
+                explanation: "dr. K.R.T. Radjiman Wedyodiningrat bertindak sebagai Ketua BPUPK didampingi dua orang wakil ketua."
+            },
+            {
+                q: "Sidang Pertama BPUPK (29 Mei - 1 Juni 1945) secara khusus membahas tentang...",
+                options: ["Rancangan UUD", "Bentuk Negara", "Dasar Negara", "Batas Wilayah"],
+                answer: 2,
+                explanation: "Sidang I difokuskan merumuskan dasar negara Indonesia merdeka yang melahirkan istilah Pancasila pada 1 Juni 1945."
+            }
+        ];
+
+        function switchView(viewName) {
+            state.currentView = viewName;
+            
+            // Update Tab UI active class
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            const activeTab = document.getElementById(`nav-${viewName}`);
+            if(activeTab) activeTab.classList.add('active');
+
+            const contentContainer = document.getElementById('app-content');
+            
+            switch (viewName) {
+                case 'home':
+                    renderHome(contentContainer);
+                    break;
+                case 'timeline':
+                    renderTimeline(contentContainer);
+                    break;
+                case 'materi':
+                    renderMateri(contentContainer);
+                    break;
+                case 'quiz':
+                    renderQuiz(contentContainer);
+                    break;
+                case 'rangkuman':
+                    renderRangkuman(contentContainer);
+                    break;
+                case 'guide':
+                    renderGuide(contentContainer);
+                    break;
+                default:
+                    renderHome(contentContainer);
+            }
+
+            // Re-initialize icons
+            lucide.createIcons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderHome(container) {
+            container.innerHTML = `
+                <div class="space-y-4">
+                    <!-- HERO BANNER -->
+                    <div class="relative overflow-hidden bg-gradient-to-br from-brand-red via-brand-crimson to-amber-600 rounded-3xl p-5 text-white shadow-xl">
+                        <div class="absolute -right-4 -bottom-4 opacity-20 text-8xl font-black">🇮🇩</div>
+                        <span class="bg-amber-400/30 backdrop-blur-md text-amber-200 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider border border-amber-300/30">
+                            Pendidikan Pancasila • Paket B
+                        </span>
+                        <h2 class="text-xl font-black font-fredoka mt-2 leading-tight">
+                            Halo Teman Belajar! 👋
+                        </h2>
+                        <p class="text-xs text-red-100 mt-1.5 leading-relaxed">
+                            Yuk kepoin perjalanan seru bangsa Indonesia dari jaman Jepang sampai lahirnya Pancasila. Dijamin paham & gak ngebosenin!
+                        </p>
+                        <div class="mt-4 flex gap-2">
+                            <button onclick="switchView('materi')" class="bg-white text-brand-red text-xs font-bold px-4 py-2.5 rounded-xl shadow-md hover:bg-amber-50 transition flex items-center gap-1.5">
+                                <i data-lucide="play" class="w-4 h-4 fill-current"></i> Mulai Belajar
+                            </button>
+                            <button onclick="switchView('timeline')" class="bg-black/20 backdrop-blur-md text-white text-xs font-semibold px-3 py-2.5 rounded-xl hover:bg-black/30 transition">
+                                🗺️ Lihat Peta
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- PROGRESS SUMMARY CARD -->
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-11 h-11 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold">
+                                🏆
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-bold text-slate-800">Skor Pengalaman (XP)</h4>
+                                <p class="text-[11px] text-slate-500"><span id="completed-count">${state.completedModules.length}</span> dari 5 Sub-Materi Selesai</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-lg font-black text-brand-navy">${state.userScore}</span>
+                            <span class="text-[10px] text-slate-400 block font-bold">POINTS</span>
+                        </div>
+                    </div>
+
+                    <!-- QUICK NAVIGATION CARDS -->
+                    <h3 class="text-xs font-extrabold text-slate-400 uppercase tracking-wider font-fredoka mt-2">
+                        Menu Utama
+                    </h3>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div onclick="switchView('materi')" class="interactive-card bg-gradient-to-br from-blue-500 to-indigo-600 p-4 rounded-2xl text-white shadow-md cursor-pointer">
+                            <div class="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center mb-2">
+                                <i data-lucide="book-open" class="w-5 h-5 text-white"></i>
+                            </div>
+                            <h4 class="font-bold text-sm">Materi Bab 1</h4>
+                            <p class="text-[10px] text-blue-100 mt-0.5">5 Sub-Bab Lengkap</p>
+                        </div>
+
+                        <div onclick="switchView('timeline')" class="interactive-card bg-gradient-to-br from-amber-500 to-orange-600 p-4 rounded-2xl text-white shadow-md cursor-pointer">
+                            <div class="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center mb-2">
+                                <i data-lucide="clock" class="w-5 h-5 text-white"></i>
+                            </div>
+                            <h4 class="font-bold text-sm">Alur Sejarah</h4>
+                            <p class="text-[10px] text-amber-100 mt-0.5">Timeline Interaktif</p>
+                        </div>
+
+                        <div onclick="switchView('quiz')" class="interactive-card bg-gradient-to-br from-emerald-500 to-teal-600 p-4 rounded-2xl text-white shadow-md cursor-pointer">
+                            <div class="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center mb-2">
+                                <i data-lucide="gamepad-2" class="w-5 h-5 text-white"></i>
+                            </div>
+                            <h4 class="font-bold text-sm">Uji Kuis</h4>
+                            <p class="text-[10px] text-emerald-100 mt-0.5">Asah Otak & Dapet XP</p>
+                        </div>
+
+                        <div onclick="switchView('rangkuman')" class="interactive-card bg-gradient-to-br from-purple-500 to-pink-600 p-4 rounded-2xl text-white shadow-md cursor-pointer">
+                            <div class="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center mb-2">
+                                <i data-lucide="key" class="w-5 h-5 text-white"></i>
+                            </div>
+                            <h4 class="font-bold text-sm">Kata Kunci</h4>
+                            <p class="text-[10px] text-purple-100 mt-0.5">Pengunci Ingatan</p>
+                        </div>
+                    </div>
+
+                    <!-- TRIVIA QUICK CARD -->
+                    <div class="bg-amber-50 border border-amber-200 p-3.5 rounded-2xl flex items-start gap-3">
+                        <span class="text-2xl">💡</span>
+                        <div class="text-xs">
+                            <strong class="text-amber-900 block font-bold">Tahukah Kamu?</strong>
+                            <p class="text-amber-800 leading-relaxed mt-0.5">
+                                Nama "Pancasila" pertama kali diusulkan oleh Ir. Sukarno pada 1 Juni 1945 atas saran seorang ahli bahasa.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderTimeline(container) {
+            let timelineHTML = timelineData.map((item, idx) => `
+                <div class="relative pl-7 pb-6 group last:pb-0">
+                    <!-- Line -->
+                    <div class="absolute left-3 top-3 bottom-0 w-0.5 bg-slate-200 group-last:hidden"></div>
+                    <!-- Icon Dot -->
+                    <div class="absolute left-0 top-1 w-6 h-6 rounded-full ${item.color} text-white flex items-center justify-center shadow-md">
+                        <i data-lucide="${item.icon}" class="w-3.5 h-3.5"></i>
+                    </div>
+                    <!-- Content Card -->
+                    <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm ml-2">
+                        <span class="bg-slate-100 text-slate-600 text-[10px] font-bold px-2 py-0.5 rounded-md">
+                            ${item.date}
+                        </span>
+                        <h4 class="font-bold text-slate-800 text-xs mt-1.5">${item.title}</h4>
+                        <p class="text-[11px] text-slate-600 mt-1 leading-relaxed">${item.desc}</p>
+                    </div>
+                </div>
+            `).join('');
+
+            container.innerHTML = `
+                <div class="space-y-4">
+                    <div class="bg-brand-navy text-white p-4 rounded-2xl">
+                        <h3 class="text-sm font-bold font-fredoka flex items-center gap-2">
+                            <i data-lucide="route" class="text-brand-gold"></i> Peta Konsep & Timeline Sejarah
+                        </h3>
+                        <p class="text-xs text-slate-300 mt-1">
+                            Urutan kronologis peristiwa penting dari kedatangan Jepang hingga perumusan Pancasila.
+                        </p>
+                    </div>
+
+                    <div class="py-2">
+                        ${timelineHTML}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderMateri(container) {
+            const activeData = materiData[state.currentMateriTab];
+
+            container.innerHTML = `
+                <div class="space-y-4">
+                    <!-- MATERI TAB SUB-NAVIGATION -->
+                    <div class="flex gap-1.5 overflow-x-auto pb-1 no-scrollbar">
+                        ${['A', 'B', 'C', 'D', 'E'].map(key => `
+                            <button onclick="changeMateriTab('${key}')" class="px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition ${state.currentMateriTab === key ? 'bg-brand-red text-white shadow-md' : 'bg-white text-slate-600 border border-slate-200'}">
+                                Menu ${key}
+                            </button>
+                        `).join('')}
+                    </div>
+
+                    <!-- MATERI HEADER BANNER -->
+                    <div class="bg-gradient-to-r ${activeData.color} text-white p-4 rounded-2xl shadow-md">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="bg-white/20 backdrop-blur-md text-[10px] font-bold px-2 py-0.5 rounded-full">
+                                ${activeData.badge}
+                            </span>
+                            <span class="text-[10px] text-white/80 font-medium">Modul Paket B</span>
+                        </div>
+                        <h3 class="text-base font-bold font-fredoka flex items-center gap-2 mt-1">
+                            <i data-lucide="${activeData.icon}" class="w-5 h-5"></i> ${activeData.title}
+                        </h3>
+                        <p class="text-xs text-white/90 mt-1 leading-relaxed">${activeData.summary}</p>
+                    </div>
+
+                    <!-- DYNAMIC MATERI BODY -->
+                    <div class="materi-body">
+                        ${activeData.content}
+                    </div>
+
+                    <!-- COMPLETE MODULE BUTTON -->
+                    <div class="pt-2">
+                        <button onclick="markModuleComplete('${state.currentMateriTab}')" class="w-full py-3 bg-emerald-600 text-white font-bold text-xs rounded-xl shadow-md hover:bg-emerald-700 transition flex items-center justify-center gap-2">
+                            <i data-lucide="check-circle" class="w-4 h-4"></i> Mark Selesai & Klaim +20 XP
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function changeMateriTab(tabKey) {
+            state.currentMateriTab = tabKey;
+            renderMateri(document.getElementById('app-content'));
+            lucide.createIcons();
+        }
+
+        function markModuleComplete(tabKey) {
+            if(!state.completedModules.includes(tabKey)) {
+                state.completedModules.push(tabKey);
+                state.userScore += 20;
+                localStorage.setItem('pancasila_score', state.userScore);
+                localStorage.setItem('pancasila_completed', JSON.stringify(state.completedModules));
+                document.getElementById('user-points').innerText = state.userScore;
+                showToast('🎉 Selamat! Kamu dapat +20 XP');
+            } else {
+                showToast(' Modul ini sudah kamu selesaikan sebelumnya!');
+            }
+        }
+
+        function showTokohDetail(tokohKey) {
+            const data = {
+                radjiman: {
+                    name: "dr. K.R.T. Radjiman Wedyodiningrat",
+                    role: "Ketua BPUPK",
+                    desc: "Seorang dokter senior dan tokoh pergerakan. Beliau memimpin jalannya sidang BPUPK dengan bijaksana dan membuka sidang pertama dengan pertanyaan krusial: 'Apa dasar negara Indonesia yang akan kita bentuk?'"
+                },
+                soeroso: {
+                    name: "R.P. Soeroso & Ichibangase Yosio",
+                    role: "Wakil Ketua BPUPK",
+                    desc: "R.P. Soeroso mewakili pihak Indonesia (sekaligus kepala kantor BPUPK), sedangkan Ichibangase Yosio adalah pejabat Jepang yang ditunjuk sebagai pengawas."
+                },
+                sukarno: {
+                    name: "Ir. Sukarno",
+                    role: "Pencetus Nama Pancasila",
+                    desc: "Pada tanggal 1 Juni 1945, Sukarno menyampaikan pidato tanpa teks yang berisi 5 asas dasar negara. Beliau menamakannya 'Pancasila' atas masukan ahli bahasa."
+                },
+                yamin: {
+                    name: "Mr. Muhammad Yamin",
+                    role: "Penyusun Asas Dasar Pertama",
+                    desc: "Pada 29 Mei 1945, Muh. Yamin mengusulkan 5 asas dasar negara baik secara lisan maupun tertulis (Peri Kebangsaan, Kemanusiaan, Ketuhanan, Kerakyatan, Kesejahteraan Rakyat)."
+                },
+                soepomo: {
+                    name: "Prof. Mr. Dr. Soepomo",
+                    role: "Ahli Hukum & Konsep Paham Negara Kesatuan",
+                    desc: "Pada 31 Mei 1945, Soepomo mengusulkan teori 'Negara Integralistik' (Persatuan) di mana negara menyatu dengan seluruh rakyatnya tanpa membeda-bedakan golongan."
+                }
+            }[tokohKey];
+
+            if(!data) return;
+
+            const modalHTML = `
+                <div id="tokoh-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                    <div class="bg-white p-5 rounded-2xl max-w-xs w-full space-y-3 relative shadow-2xl">
+                        <button onclick="closeTokohModal()" class="absolute top-3 right-3 text-slate-400">
+                            <i data-lucide="x" class="w-5 h-5"></i>
+                        </button>
+                        <span class="bg-amber-100 text-amber-800 font-bold text-[10px] px-2 py-0.5 rounded">${data.role}</span>
+                        <h4 class="font-bold text-slate-800 text-sm mt-1">${data.name}</h4>
+                        <p class="text-xs text-slate-600 leading-relaxed">${data.desc}</p>
+                        <button onclick="closeTokohModal()" class="w-full py-2 bg-brand-navy text-white font-bold text-xs rounded-xl mt-2">Paham!</button>
+                    </div>
+                </div>
+            `;
+
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            lucide.createIcons();
+        }
+
+        function closeTokohModal() {
+            const m = document.getElementById('tokoh-modal');
+            if(m) m.remove();
+        }
+
+        function renderQuiz(container) {
+            container.innerHTML = `
+                <div class="space-y-4">
+                    <div class="bg-gradient-to-r from-emerald-600 to-teal-700 text-white p-4 rounded-2xl shadow-md">
+                        <h3 class="text-base font-bold font-fredoka flex items-center gap-2">
+                            <i data-lucide="gamepad-2"></i> Uji Pemahaman Interaktif
+                        </h3>
+                        <p class="text-xs text-emerald-100 mt-1">
+                            Jawab 5 pertanyaan pilihan ganda ini untuk menguji daya ingat kamu.
+                        </p>
+                    </div>
+
+                    <div id="quiz-box" class="space-y-4">
+                        <!-- Questions mapped dynamically -->
+                    </div>
+
+                    <div id="quiz-result" class="hidden bg-white p-5 rounded-2xl border border-slate-200 text-center space-y-3 shadow-sm">
+                        <div class="text-4xl">🎉</div>
+                        <h4 class="text-base font-bold text-slate-800">Kuis Selesai!</h4>
+                        <p class="text-xs text-slate-600">Skor Kamu: <span id="quiz-score-val" class="font-extrabold text-brand-red text-base">0</span> / 100</p>
+                        <button onclick="switchView('quiz')" class="w-full py-2.5 bg-brand-navy text-white text-xs font-bold rounded-xl">
+                            Ulangi Kuis 🔄
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            loadQuizQuestions();
+        }
+
+        function loadQuizQuestions() {
+            const box = document.getElementById('quiz-box');
+            box.innerHTML = quizQuestions.map((item, qIdx) => `
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+                    <p class="text-xs font-bold text-slate-800 leading-snug">
+                        <span class="text-brand-red font-black">${qIdx + 1}.</span> ${item.q}
+                    </p>
+                    <div class="space-y-2">
+                        ${item.options.map((opt, oIdx) => `
+                            <button onclick="selectAnswer(${qIdx}, ${oIdx})" id="btn-${qIdx}-${oIdx}" class="quiz-opt-btn w-full text-left p-2.5 rounded-xl border border-slate-200 text-xs font-medium hover:bg-slate-50 transition flex items-center justify-between">
+                                <span>${opt}</span>
+                                <i data-lucide="circle" class="w-4 h-4 text-slate-300"></i>
+                            </button>
+                        `).join('')}
+                    </div>
+                    <div id="exp-${qIdx}" class="hidden p-2.5 bg-amber-50 border border-amber-200 rounded-xl text-[11px] text-amber-900 leading-relaxed">
+                        <strong>Pembahasan:</strong> ${item.explanation}
+                    </div>
+                </div>
+            `).join('');
+
+            box.innerHTML += `
+                <button onclick="submitQuiz()" class="w-full py-3 bg-brand-red text-white text-xs font-bold rounded-xl shadow-md hover:bg-brand-crimson transition">
+                    Kirim Jawaban & Lihat Hasil
+                </button>
+            `;
+        }
+
+        function selectAnswer(qIdx, oIdx) {
+            state.quizAnswers[qIdx] = oIdx;
+            // Clear selections for this question
+            for(let i=0; i<4; i++) {
+                const btn = document.getElementById(`btn-${qIdx}-${i}`);
+                if(btn) {
+                    btn.classList.remove('bg-brand-navy', 'text-white', 'border-brand-navy');
+                    btn.classList.add('border-slate-200');
+                }
+            }
+            // Highlight selected
+            const selectedBtn = document.getElementById(`btn-${qIdx}-${oIdx}`);
+            if(selectedBtn) {
+                selectedBtn.classList.add('bg-brand-navy', 'text-white', 'border-brand-navy');
+            }
+        }
+
+        function submitQuiz() {
+            let correct = 0;
+            quizQuestions.forEach((q, idx) => {
+                const userAns = state.quizAnswers[idx];
+                const expBox = document.getElementById(`exp-${idx}`);
+                if(expBox) expBox.classList.remove('hidden');
+
+                if(userAns === q.answer) {
+                    correct++;
+                    const btn = document.getElementById(`btn-${idx}-${userAns}`);
+                    if(btn) btn.classList.add('bg-emerald-600', 'text-white');
+                } else if(userAns !== undefined) {
+                    const btn = document.getElementById(`btn-${idx}-${userAns}`);
+                    if(btn) btn.classList.add('bg-rose-600', 'text-white');
+                }
+            });
+
+            const score = (correct / quizQuestions.length) * 100;
+            state.userScore += score;
+            localStorage.setItem('pancasila_score', state.userScore);
+            document.getElementById('user-points').innerText = state.userScore;
+
+            const resBox = document.getElementById('quiz-result');
+            document.getElementById('quiz-score-val').innerText = score;
+            resBox.classList.remove('hidden');
+            showToast(`Kuis Selesai! Nilai Kamu: ${score}`);
+        }
+
+        function renderRangkuman(container) {
+            container.innerHTML = `
+                <div class="space-y-4">
+                    <div class="bg-gradient-to-r from-purple-600 to-pink-600 text-white p-4 rounded-2xl shadow-md">
+                        <h3 class="text-base font-bold font-fredoka flex items-center gap-2">
+                            <i data-lucide="sparkles"></i> Flashcard & Kata Kunci Super
+                        </h3>
+                        <p class="text-xs text-purple-100 mt-1">
+                            Pengunci ingatan cepat sebelum ujian!
+                        </p>
+                    </div>
+
+                    <!-- LOGIC FLOW CHAIN -->
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+                        <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider mb-3">
+                            🔗 Rantai Alur Ingatan (Mind Chain)
+                        </h4>
+                        <div class="flex flex-wrap gap-1.5 text-[11px] font-bold">
+                            <span class="px-2.5 py-1 bg-red-100 text-red-800 rounded-lg">Jepang Datang (1942)</span> ➡️
+                            <span class="px-2.5 py-1 bg-amber-100 text-amber-800 rounded-lg">Perang Asia Timur Raya</span> ➡️
+                            <span class="px-2.5 py-1 bg-blue-100 text-blue-800 rounded-lg">Jepang Terdesak (1944)</span> ➡️
+                            <span class="px-2.5 py-1 bg-purple-100 text-purple-800 rounded-lg">Janji Koiso</span> ➡️
+                            <span class="px-2.5 py-1 bg-teal-100 text-teal-800 rounded-lg">BPUPK Dibentuk (1945)</span> ➡️
+                            <span class="px-2.5 py-1 bg-emerald-100 text-emerald-800 rounded-lg">Sidang BPUPK</span> ➡️
+                            <span class="px-2.5 py-1 bg-brand-red text-white rounded-lg">Lahir Pancasila (1 Juni)</span>
+                        </div>
+                    </div>
+
+                    <!-- RANGKUMAN CARDS -->
+                    <div class="space-y-2.5">
+                        <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 text-xs">
+                            <span class="font-extrabold text-brand-navy block mb-1">📌 Poin Penting 1: Peralihan Kekuasaan</span>
+                            Belanda menyerah di Kalijati (8 Maret 1942). Jepang menggunakan slogan propaganda Gerakan Tiga A untuk menarik simpati rakyat.
+                        </div>
+
+                        <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 text-xs">
+                            <span class="font-extrabold text-brand-navy block mb-1">📌 Poin Penting 2: Lahirnya BPUPK</span>
+                            Diumumkan 1 Maret 1945 dan dilantik 29 April 1945 oleh Letjend Kumakichi Harada. Diketuai oleh dr. K.R.T. Radjiman Wedyodiningrat.
+                        </div>
+
+                        <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 text-xs">
+                            <span class="font-extrabold text-brand-navy block mb-1">📌 Poin Penting 3: Sidang-Sidang BPUPK</span>
+                             Sidang I (29 Mei - 1 Juni 1945) merumuskan dasar negara (Pancasila).<br>
+                             Sidang II (10 - 17 Juli 1945) merumuskan Rancangan UUD dan wilayah negara.
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderGuide(container) {
+            container.innerHTML = `
+                <div class="space-y-4 text-xs leading-relaxed">
+                    <div class="bg-brand-navy text-white p-4 rounded-2xl">
+                        <h3 class="text-sm font-bold font-fredoka flex items-center gap-2">
+                            <i data-lucide="code"></i> Panduan Guru & Pengembang Aplikasi Mobile
+                        </h3>
+                        <p class="text-xs text-slate-300 mt-1">
+                            Petunjuk integrasi UI/UX, prinsip pembelajaran, serta pengemasan menjadi APK/IPA.
+                        </p>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 space-y-3">
+                        <h4 class="font-bold text-slate-800 text-sm border-b pb-2">1. Prinsip Desain Pembelajaran (Paket B / Usia 13+)</h4>
+                        <ul class="list-disc pl-4 space-y-1 text-slate-600">
+                            <li><strong>Microlearning:</strong> Materi dipecah menjadi kartu-kartu ringkas (30-60 detik baca).</li>
+                            <li><strong>Gamifikasi:</strong> Pemberian poin XP, badge penyelesaian, dan kuis langsung.</li>
+                            <li><strong>Dual Coding Theory:</strong> Mengombinasikan simbol/ikon visual dengan teks komunikatif.</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 space-y-3">
+                        <h4 class="font-bold text-slate-800 text-sm border-b pb-2">2. Cara Mengubah Kode Ini Menjadi Aplikasi Android (APK)</h4>
+                        <p class="text-slate-600">Aplikasi ini berbasis PWA / HTML5 responsif. Untuk menjadikannya APK Android, gunakan metode Capacitor / Cordova:</p>
+                        
+                        <div class="bg-slate-900 text-amber-300 p-3 rounded-xl font-mono text-[10px] space-y-1">
+                            <p># 1. Install Capacitor CLI</p>
+                            <p class="text-white">npm install -g @capacitor/cli</p>
+                            <p># 2. Inisialisasi Proyek Mobile</p>
+                            <p class="text-white">npx cap init PancasilaPlay com.pancasila.app</p>
+                            <p># 3. Tambah Platform Android</p>
+                            <p class="text-white">npm install @capacitor/android</p>
+                            <p class="text-white">npx cap add android</p>
+                            <p># 4. Buka di Android Studio & Export APK</p>
+                            <p class="text-white">npx cap open android</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function toggleInfoModal() {
+            const modal = document.getElementById('info-modal');
+            modal.classList.toggle('hidden');
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').innerText = msg;
+            toast.classList.remove('opacity-0', 'pointer-events-none');
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'pointer-events-none');
+            }, 3000);
+        }
+
+        window.onload = function() {
+            switchView('home');
+            document.getElementById('user-points').innerText = state.userScore;
+        };
+    </script>
+</body>
+</html>
